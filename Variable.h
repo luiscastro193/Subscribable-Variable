@@ -7,21 +7,21 @@ template< class T >
 class Variable{
 private:
 	T value;
-	boost::signals2::signal<void (const T *)> subscribers;
+	boost::signals2::signal<void (const T &)> subscribers;
 public:
 	inline Variable(){;}
 	
 	inline Variable(T initial_value){
 		value = initial_value;
 	}
-	inline void subscribe(const boost::function1<void, const int*>& function){
+	inline void subscribe(const boost::function1<void, const T &>& function){
 		subscribers.connect(function);
 	}
-	inline void desubscribe(const boost::function1<void, const int*>& function){
+	inline void desubscribe(const boost::function1<void, const T &>& function){
 		subscribers.disconnect(function);
 	}
 	inline void signal(){
-		subscribers(&value);
+		subscribers(value);
 	}
 	inline T get() const{
 		return value;
@@ -29,14 +29,14 @@ public:
 	T operator = (const Variable<T> other){
 		if( value != other.get() ){
 			value = other.get();
-			subscribers(&value);
+			subscribers(value);
 		}
 		return value;
 	}
 	T operator = (const T new_value){
 		if( value != new_value ){
 			value = new_value;
-			subscribers(&value);
+			subscribers(value);
 		}
 		return value;
 	}
