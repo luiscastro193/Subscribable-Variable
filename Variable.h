@@ -14,10 +14,10 @@ public:
 	inline Variable(T initial_value){
 		value = initial_value;
 	}
-	inline void subscribe(void function(const T *)){
+	inline void subscribe(const boost::function1<void, const int*>& function){
 		subscribers.connect(function);
 	}
-	inline void desubscribe(void function(const T *)){
+	inline void desubscribe(const boost::function1<void, const int*>& function){
 		subscribers.disconnect(function);
 	}
 	inline void signal(){
