@@ -1,2 +1,2 @@
 # Subscribable-Variable
-Template class for variables that allow functions to automatically activate when it is modified
+Template class for variables that allow functions to be automatically triggered when it is modified.
