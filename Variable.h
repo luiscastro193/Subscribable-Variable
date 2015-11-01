@@ -15,16 +15,20 @@ public:
 		pending_loop = false;
 		repeat_loop = false;
 	}
-	
-	inline Variable(T initial_value){
+	inline Variable(const Variable<T> & other){
+		pending_loop = false;
+		repeat_loop = false;
+		value = other.get();
+	}
+	inline Variable(const T & initial_value){
 		pending_loop = false;
 		repeat_loop = false;
 		value = initial_value;
 	}
-	inline void subscribe(const boost::function1<void, const T &>& function){
+	inline void subscribe(const boost::function1<void, const T &> & function){
 		subscribers.connect(function);
 	}
-	inline void desubscribe(const boost::function1<void, const T &>& function){
+	inline void desubscribe(const boost::function1<void, const T &> & function){
 		subscribers.disconnect(function);
 	}
 	void signal(){
@@ -42,14 +46,14 @@ public:
 	inline T get() const{
 		return value;
 	}
-	T operator = (const Variable<T> other){
+	T operator = (const Variable<T> & other){
 		if( value != other.get() ){
 			value = other.get();
 			signal();
 		}
 		return value;
 	}
-	T operator = (const T new_value){
+	T operator = (const T & new_value){
 		if( value != new_value ){
 			value = new_value;
 			signal();
