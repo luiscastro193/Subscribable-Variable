@@ -33,11 +33,19 @@ public:
 	inline void subscribe(Foo* instance){
 		subscribers.template connect<Foo, member_ptr>(instance);
 	}
+	template <typename Foo, void (Foo::* member_ptr) (const T &) const>
+	inline void subscribe(Foo* instance){
+		subscribers.template connect<Foo, member_ptr>(instance);
+	}
 	template <void (* function_ptr) (const T &)>
 	inline void desubscribe(){
 		subscribers.template disconnect<function_ptr>();
 	}
 	template <typename Foo, void (Foo::* member_ptr) (const T &)>
+	inline void desubscribe(Foo* instance){
+		subscribers.template disconnect<Foo, member_ptr>(instance);
+	}
+	template <typename Foo, void (Foo::* member_ptr) (const T &) const>
 	inline void desubscribe(Foo* instance){
 		subscribers.template disconnect<Foo, member_ptr>(instance);
 	}
