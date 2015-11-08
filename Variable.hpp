@@ -1,13 +1,13 @@
 #ifndef VARIABLE_H
 #define VARIABLE_H
 
-#include <boost/signals2/signal.hpp>
+#include "nano_signal_slot.hpp"
 
-template< class T > 
+template< typename T > 
 class Variable{
 private:
 	T value;
-	boost::signals2::signal<void (const T &)> subscribers;
+	Nano::Signal<void (const T &)> subscribers;
 	bool pending_loop;
 	bool repeat_loop;
 public:
@@ -25,11 +25,21 @@ public:
 		repeat_loop = false;
 		value = initial_value;
 	}
-	inline void subscribe(const boost::function1<void, const T &> & function){
-		subscribers.connect(function);
+	template <void (* function_ptr) (const T &)>
+	inline void subscribe(){
+		subscribers.template connect<function_ptr>();
 	}
-	inline void desubscribe(const boost::function1<void, const T &> & function){
-		subscribers.disconnect(function);
+	template <typename Foo, void (Foo::* member_ptr) (const T &)>
+	inline void subscribe(Foo* instance){
+		subscribers.template connect<Foo, member_ptr>(instance);
+	}
+	template <void (* function_ptr) (const T &)>
+	inline void desubscribe(){
+		subscribers.template disconnect<function_ptr>();
+	}
+	template <typename Foo, void (Foo::* member_ptr) (const T &)>
+	inline void desubscribe(Foo* instance){
+		subscribers.template disconnect<Foo, member_ptr>(instance);
 	}
 	void signal(){
 		if( pending_loop )
@@ -38,7 +48,7 @@ public:
 			do{
 				repeat_loop = false;
 				pending_loop = true;
-				subscribers(value);
+				subscribers.emit(value);
 				pending_loop = false;
 			} while (repeat_loop);
 		}
