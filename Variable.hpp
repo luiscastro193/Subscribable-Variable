@@ -49,7 +49,7 @@ public:
 	inline void desubscribe(Foo* instance){
 		subscribers.template disconnect<Foo, member_ptr>(instance);
 	}
-	void signal(){
+	void send(){
 		if( pending_loop )
 			repeat_loop = true;
 		else{
@@ -67,14 +67,14 @@ public:
 	T operator = (const Variable<T> & other){
 		if( value != other.get() ){
 			value = other.get();
-			signal();
+			send();
 		}
 		return value;
 	}
 	T operator = (const T & new_value){
 		if( value != new_value ){
 			value = new_value;
-			signal();
+			send();
 		}
 		return value;
 	}
